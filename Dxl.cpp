@@ -139,20 +139,4 @@ int Dxl::set_moving_speed(int DXL_ID, int speed){
   }
   return 0;
 }
-int main(int argc, char *argv[])
-{
-  std::vector<std::string> k = get_available_ports("/dev/ttyUSB");
-  for(auto &i : k){
-    std::cout << i << std::endl;
-  }
-  Dxl dxl(k[0]);
-  std::vector<int> ids = dxl.scan(20);
-  for(auto &i : ids){
-    std::cout << i << " Current Pos: " << dxl.read(i) << " Current Speed: " << dxl.get_present_speed(i) << std::endl;
-    dxl.write(i, -60, 1000);
-    usleep(500000);
-    dxl.write(i, 60, 1000);
-  }
 
-  return 0;
-}
