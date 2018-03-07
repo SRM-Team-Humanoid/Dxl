@@ -1,6 +1,7 @@
 #include "Dxl.h"
 #include <string>
 #include <iostream>
+#include <unistd.h>
 // Control table address
 #define ADDR_MX_TORQUE_ENABLE           24                  // Control table address is different in Dynamixel model
 #define ADDR_MX_GOAL_POSITION           30
@@ -63,7 +64,11 @@ std::vector<int> Dxl::scan(int range = 254){
 }
 
 //Write Works
-int Dxl::write(int DXL_ID, float POS){ 
+int Dxl::write(int DXL_ID, float POS, int speed){
+  speed = speed / 1000 * 1024 - 1;
+  if(POS <= 0)
+    speed += 1024;
+  set_moving_speed(DXL_ID, speed);
   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_MX_TORQUE_ENABLE, TORQUE, &dxl_error);
   if(dxl_comm_result != COMM_SUCCESS)
   {
@@ -88,7 +93,7 @@ int Dxl::write(int DXL_ID, float POS){
   }
   return 0;
 }
-
+//Read Works
 float Dxl::read(int DXL_ID){
   dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, DXL_ID, ADDR_MX_PRESENT_POSITION,&dxl_present_pos, &dxl_error);
   if(dxl_comm_result != COMM_SUCCESS)
@@ -104,6 +109,36 @@ float Dxl::read(int DXL_ID){
   return float(dxl_present_pos - 2048) * 0.088;
 }
 
+int Dxl::get_present_speed(int DXL_ID){
+  uint16_t dxl_speed;
+  dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, DXL_ID, 32, &dxl_speed, &dxl_error);
+  if(dxl_comm_result != COMM_SUCCESS)
+  {
+    std::cout << packetHandler->getTxRxResult(dxl_comm_result) << std::endl;
+    return -1;
+  }
+  else if(dxl_error != 0)
+  {
+    std::cout << packetHandler->getRxPacketError(dxl_error);
+    return -2;
+  }
+  return dxl_speed;
+}
+
+int Dxl::set_moving_speed(int DXL_ID, int speed){
+  dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, DXL_ID, 32, (speed /1000 * 1024) - 1, &dxl_error);
+  if(dxl_comm_result != COMM_SUCCESS)
+  {
+    std::cout << packetHandler->getTxRxResult(dxl_comm_result) << std::endl;
+    return -1;
+  }
+  else if(dxl_error != 0)
+  {
+    std::cout << packetHandler->getRxPacketError(dxl_error);
+    return -2;
+  }
+  return 0;
+}
 int main(int argc, char *argv[])
 {
   std::vector<std::string> k = get_available_ports("/dev/ttyUSB");
@@ -113,8 +148,10 @@ int main(int argc, char *argv[])
   Dxl dxl(k[0]);
   std::vector<int> ids = dxl.scan(20);
   for(auto &i : ids){
-    std::cout << i << " Current Pos: " << dxl.read(i) << std::endl;
-    dxl.write(i, -40);
+    std::cout << i << " Current Pos: " << dxl.read(i) << " Current Speed: " << dxl.get_present_speed(i) << std::endl;
+    dxl.write(i, -60, 1000);
+    usleep(500000);
+    dxl.write(i, 60, 1000);
   }
 
   return 0;

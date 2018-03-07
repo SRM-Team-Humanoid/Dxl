@@ -15,7 +15,7 @@ class Dxl{
   public:
     Dxl(std::string);
     std::vector<int> scan(int);
-    int write(int, float);
+    int write(int, float, int);
     float read(int);
     int get_present_speed(int);
     int set_moving_speed(int, int);
