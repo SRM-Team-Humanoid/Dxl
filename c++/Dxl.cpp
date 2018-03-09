@@ -65,9 +65,10 @@ std::vector<int> Dxl::scan(int range = 254){
 
 //Write Works
 int Dxl::write(int DXL_ID, float POS, int speed){
-  speed = speed / 1000 * 1024 - 1;
-  if(POS <= 0)
+  speed = float(speed) / 1000 * 1024 - 1;
+  if(POS < 0)
     speed += 1024;
+  std::cout << "Func: " << speed << std::endl;
   set_moving_speed(DXL_ID, speed);
   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_MX_TORQUE_ENABLE, TORQUE, &dxl_error);
   if(dxl_comm_result != COMM_SUCCESS)
