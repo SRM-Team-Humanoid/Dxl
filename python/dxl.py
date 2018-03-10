@@ -96,7 +96,30 @@ class Dxl:
     def set_moving_speed(self, ids):
         for i,val in ids.iteritems():
             self._set_moving_speed(i,val)
+    def _enable_torque(self, DXL_ID):
+        dynamixel.write2ByteTxRx(self.portHandler, self.PROTOCOL_VERSION, DXL_ID, self.ADDR_MX_TORQUE_ENABLE, 1)
+        dxl_comm_result = dynamixel.getLastTxRxResult(self.portHandler, self.PROTOCOL_VERSION)
+        dxl_error = dynamixel.getLastRxPacketError(self.portHandler, self.PROTOCOL_VERSION)
+        if(dxl_comm_result != COMM_SUCCESS):
+            raise(dynamixel.getTxRxResult(self.PROTOCOL_VERSION, self.dxl_comm_result))
+        elif(dxl_error != 0):
+            raise(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
+    
+    def enable_torque(self, ids):
+        for i in ids:
+            self._enable_torque(i)
 
+    def _disable_torque(self, DXL_ID):
+        dynamixel.write2ByteTxRx(self.portHandler, self.PROTOCOL_VERSION, DXL_ID, self.ADDR_MX_TORQUE_ENABLE, 0)
+        dxl_comm_result = dynamixel.getLastTxRxResult(self.portHandler, self.PROTOCOL_VERSION)
+        dxl_error = dynamixel.getLastRxPacketError(self.portHandler, self.PROTOCOL_VERSION)
+        if(dxl_comm_result != COMM_SUCCESS):
+            raise(dynamixel.getTxRxResult(self.PROTOCOL_VERSION, self.dxl_comm_result))
+        elif(dxl_error != 0):
+            raise(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
+    def disable_torque(self, ids):
+        for i in ids:
+            self._enable_torque(i)
 # ports = get_available_ports()
 
 # d = Dxl(ports[0])

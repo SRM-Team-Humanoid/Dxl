@@ -9,9 +9,8 @@ int main(int argc, char *argv[])
   vector<string> ports = get_available_ports(file);
   Dxl dxl(ports[0]);
   vector<int> ids = dxl.scan(25);
-  for(auto &i : ids){
-    dxl.write(i, 0.0, 100);
-    std::cout << dxl.get_present_speed(i) << endl;
-  }
+  int pos = 100;
+  dxl.write(9, pos, 100);
+  dxl.write(17, -pos, 100);
   return 0;
 }

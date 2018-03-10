@@ -6,6 +6,7 @@
 #define ADDR_MX_TORQUE_ENABLE           24                  // Control table address is different in Dynamixel model
 #define ADDR_MX_GOAL_POSITION           30
 #define ADDR_MX_PRESENT_POSITION        36
+#define ADDR_MX_MOVING_SPEED            32
 //Communication Macros
 #define COMM_SUCCESS 0
 #define COMM_TX_FAIL -1001
@@ -127,7 +128,7 @@ int Dxl::get_present_speed(int DXL_ID){
 }
 
 int Dxl::set_moving_speed(int DXL_ID, int speed){
-  dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, DXL_ID, 32, (speed /1000 * 1024) - 1, &dxl_error);
+  dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, DXL_ID, ADDR_MX_MOVING_SPEED, int(float(speed) / 1000 * 1024), &dxl_error);
   if(dxl_comm_result != COMM_SUCCESS)
   {
     std::cout << packetHandler->getTxRxResult(dxl_comm_result) << std::endl;
