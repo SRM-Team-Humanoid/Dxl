@@ -1,7 +1,6 @@
 #include "Dxl.h"
 #include <vector>
 #include <iostream>
-
 using namespace std;
 int main(int argc, char *argv[])
 {
@@ -14,8 +13,7 @@ int main(int argc, char *argv[])
   }
   Dxl dxl(ports[0]);
   vector<int> ids = dxl.scan(25);
-  int pos = 100;
-  dxl.write(9, 100.0, 300);
-  dxl.write(17, -100.0, 300);
+  map<int, float> k = {{9, 100}, {17, -100}};
+  dxl.set_goal_position(k);
   return 0;
 }

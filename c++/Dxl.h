@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <map>
+#include <iterator>
 #include <fcntl.h>
 class Dxl{
   dynamixel::PortHandler *portHandler;
@@ -15,10 +17,14 @@ class Dxl{
   public:
     Dxl(std::string);
     std::vector<int> scan(int);
-    int write(int, float, int);
-    float read(int);
-    int get_present_speed(int);
-    int set_moving_speed(int, int);
+    int _write(int, float);
+    int set_goal_position(std::map<int, float>);
+    float _read(int);
+    std::map<int, float> get_present_position(int);
+    int _get_present_speed(int);
+    std::map<int, int> get_present_speed(int);
+    int _set_moving_speed(int, int);
+    int set_moving_speed(std::map<int, int>);
 };
 
 

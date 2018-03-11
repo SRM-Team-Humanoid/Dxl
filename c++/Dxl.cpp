@@ -65,8 +65,7 @@ std::vector<int> Dxl::scan(int range = 254){
 }
 
 //Write Works
-int Dxl::write(int DXL_ID, float POS, int speed){
-  this->set_moving_speed(DXL_ID, speed);
+int Dxl::_write(int DXL_ID, float POS){
   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_MX_TORQUE_ENABLE, TORQUE, &dxl_error);
   if(dxl_comm_result != COMM_SUCCESS)
   {
@@ -92,7 +91,7 @@ int Dxl::write(int DXL_ID, float POS, int speed){
   return 0;
 }
 //Read Works
-float Dxl::read(int DXL_ID){
+float Dxl::_read(int DXL_ID){
   dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, DXL_ID, ADDR_MX_PRESENT_POSITION,&dxl_present_pos, &dxl_error);
   if(dxl_comm_result != COMM_SUCCESS)
   {
@@ -107,7 +106,7 @@ float Dxl::read(int DXL_ID){
   return float(dxl_present_pos - 2048) * 0.088;
 }
 
-int Dxl::get_present_speed(int DXL_ID){
+int Dxl::_get_present_speed(int DXL_ID){
   uint16_t dxl_speed;
   dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, DXL_ID, 32, &dxl_speed, &dxl_error);
   if(dxl_comm_result != COMM_SUCCESS)
@@ -123,7 +122,7 @@ int Dxl::get_present_speed(int DXL_ID){
   return dxl_speed;
 }
 
-int Dxl::set_moving_speed(int DXL_ID, int speed){
+int Dxl::_set_moving_speed(int DXL_ID, int speed){
   dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, DXL_ID, ADDR_MX_MOVING_SPEED, int(float(speed) / 1000 * 1024), &dxl_error);
   if(dxl_comm_result != COMM_SUCCESS)
   {
@@ -138,3 +137,39 @@ int Dxl::set_moving_speed(int DXL_ID, int speed){
   return 0;
 }
 
+int Dxl::set_goal_position(std::map<int, float> a){
+  for( auto &i : a){
+    this->_write(i.first, i.second);
+  }
+  return 0;
+}
+
+std::map<int, float> Dxl::get_present_position(int n){
+  std::map<int, float> res;
+  float pos;
+  for(int i = 0;i <= n;i++)
+  {
+    pos = this->_read(i);
+    if(pos >= 0)
+      res.insert(std::pair<int, float> (i, pos));
+  }
+  return res;
+}
+
+int Dxl::set_moving_speed(std::map<int, int> m){
+  for(auto &i : m){
+    this->_set_moving_speed(i.first, i.second);
+  }
+  return 0;
+}
+
+std::map<int, int> Dxl::get_present_speed(int k){
+  int sp;
+  std::map<int, int> res;
+  for(int i = 0;i <= k;i++){
+    sp = this->_get_present_speed(i);
+    if(sp >= 0)
+      res.insert(std::pair<int, int>(i, sp));
+  }
+  return res;
+}
