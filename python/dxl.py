@@ -77,10 +77,10 @@ class Dxl:
         elif(dxl_error != 0):
             raise(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
         return (dxl_present_position - 2048) * 0.088
-    def write(self, ids):
+    def set_goal_position(self, ids):
         for i, angle in ids.iteritems():
             self._write(i,angle)
-    def read(self, ids):
+    def get_present_position(self, ids):
         present_pos = {}
         for i in ids:
             present_pos[i] = self._read(i)
