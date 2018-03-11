@@ -64,18 +64,18 @@ class Dxl:
         dxl_comm_result= dynamixel.getLastTxRxResult(self.portHandler, self.PROTOCOL_VERSION)
         dxl_error = dynamixel.getLastRxPacketError(self.portHandler, self.PROTOCOL_VERSION)
         if(dxl_comm_result != COMM_SUCCESS):
-            raise(dynamixel.getTxRxResult(self.PROTOCOL_VERSION, self.dxl_comm_result))
+            print(dynamixel.getTxRxResult(self.PROTOCOL_VERSION, self.dxl_comm_result))
         elif(dxl_error != 0):
-            raise(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
+            print(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
     
     def _read(self, DXL_ID):
         dxl_present_position = dynamixel.read2ByteTxRx(self.portHandler, self.PROTOCOL_VERSION, DXL_ID, self.ADDR_MX_PRESENT_POSITION)
         dxl_comm_result = dynamixel.getLastTxRxResult(self.portHandler, self.PROTOCOL_VERSION)
         dxl_error = dynamixel.getLastRxPacketError(self.portHandler, self.PROTOCOL_VERSION)
         if(dxl_comm_result != COMM_SUCCESS):
-            raise(dynamixel.getTxRxResult(self.PROTOCOL_VERSION, self.dxl_comm_result))
+            print(dynamixel.getTxRxResult(self.PROTOCOL_VERSION, self.dxl_comm_result))
         elif(dxl_error != 0):
-            raise(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
+            print(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
         return (dxl_present_position - 2048) * 0.088
     def set_goal_position(self, ids):
         for i, angle in ids.iteritems():
@@ -90,9 +90,9 @@ class Dxl:
         dxl_comm_result = dynamixel.getLastTxRxResult(self.portHandler, self.PROTOCOL_VERSION)
         dxl_error = dynamixel.getLastRxPacketError(self.portHandler, self.PROTOCOL_VERSION)
         if(dxl_comm_result != COMM_SUCCESS):
-            raise(dynamixel.getTxRxResult(self.PROTOCOL_VERSION, self.dxl_comm_result))
+            print(dynamixel.getTxRxResult(self.PROTOCOL_VERSION, self.dxl_comm_result))
         elif(dxl_error != 0):
-            raise(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
+            print(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
     def set_moving_speed(self, ids):
         for i,val in ids.iteritems():
             self._set_moving_speed(i,val)
@@ -101,9 +101,9 @@ class Dxl:
         dxl_comm_result = dynamixel.getLastTxRxResult(self.portHandler, self.PROTOCOL_VERSION)
         dxl_error = dynamixel.getLastRxPacketError(self.portHandler, self.PROTOCOL_VERSION)
         if(dxl_comm_result != COMM_SUCCESS):
-            raise(dynamixel.getTxRxResult(self.PROTOCOL_VERSION, self.dxl_comm_result))
+            print(dynamixel.getTxRxResult(self.PROTOCOL_VERSION, self.dxl_comm_result))
         elif(dxl_error != 0):
-            raise(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
+            print(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
     
     def enable_torque(self, ids):
         for i in ids:
@@ -114,9 +114,9 @@ class Dxl:
         dxl_comm_result = dynamixel.getLastTxRxResult(self.portHandler, self.PROTOCOL_VERSION)
         dxl_error = dynamixel.getLastRxPacketError(self.portHandler, self.PROTOCOL_VERSION)
         if(dxl_comm_result != COMM_SUCCESS):
-            raise(dynamixel.getTxRxResult(self.PROTOCOL_VERSION, self.dxl_comm_result))
+            print(dynamixel.getTxRxResult(self.PROTOCOL_VERSION, self.dxl_comm_result))
         elif(dxl_error != 0):
-            raise(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
+            print(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
     def disable_torque(self, ids):
         for i in ids:
             self._enable_torque(i)
