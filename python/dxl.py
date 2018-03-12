@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 import glob
-
+import ctypes
 import dynamixel_functions as dynamixel
 
                             # Dynamixel moving status threshold
@@ -17,13 +17,17 @@ class Dxl:
         self.packetHandler = dynamixel.packetHandler()
         self.dxl_comm_result = COMM_TX_FAIL
         self.dxl_error = 0
+        self.dxl_addparam_result = 0
+        self.LEN_MX_GOAL_POSITION        = 2
+        self.LEN_MX_PRESENT_POSITION     = 2
         self.ADDR_MX_TORQUE_ENABLE       = 24                            # Control table address is different in Dynamixel model
         self.ADDR_MX_GOAL_POSITION       = 30
         self.ADDR_MX_PRESENT_POSITION    = 36
         self.ADDR_MX_SPEED               = 32
+        self.PROTOCOL_VERSION            = 1                             # See which protocol version is used in the Dynamixel
+        self.groupSync = dynamixel.groupSyncWrite(self.portHandler, self.PROTOCOL_VERSION, self.ADDR_MX_GOAL_POSITION, self.LEN_MX_GOAL_POSITION)
 
 # Protocol version
-        self.PROTOCOL_VERSION            = 1                             # See which protocol version is used in the Dynamixel
 
 # Default setting
         self.BAUDRATE                    = 1000000
@@ -78,8 +82,17 @@ class Dxl:
             print(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
         return (dxl_present_position - 2048) * 0.088
     def set_goal_position(self, ids):
+        # for i, angle in ids.iteritems():
+            # self._write(i,angle)
         for i, angle in ids.iteritems():
-            self._write(i,angle)
+            dxl_addparam_result = ctypes.c_ubyte(dynamixel.groupSyncWriteAddParam(self.groupSync, i, 2048 + int(angle / 0.088), self.LEN_MX_GOAL_POSITION)).value
+        dynamixel.groupSyncWriteTxPacket(self.groupSync)
+        dxl_comm_result = dynamixel.getLastTxRxResult(self.portHandler, self.PROTOCOL_VERSION)
+        if(dxl_comm_result != COMM_SUCCESS):
+            print(dynamixel.getTxRxResult(self.PROTOCOL_VERSION, self.dxl_comm_result))
+        dynamixel.groupSyncWriteClearParam(self.groupSync)
+
+
     def get_present_position(self, ids):
         present_pos = {}
         for i in ids:
@@ -94,8 +107,9 @@ class Dxl:
         elif(dxl_error != 0):
             print(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
     def set_moving_speed(self, ids):
-        for i,val in ids.iteritems():
-            self._set_moving_speed(i,val)
+        # for i,val in ids.iteritems():
+        #     self._set_moving_speed(i,val)
+
     def _enable_torque(self, DXL_ID):
         dynamixel.write2ByteTxRx(self.portHandler, self.PROTOCOL_VERSION, DXL_ID, self.ADDR_MX_TORQUE_ENABLE, 1)
         dxl_comm_result = dynamixel.getLastTxRxResult(self.portHandler, self.PROTOCOL_VERSION)
