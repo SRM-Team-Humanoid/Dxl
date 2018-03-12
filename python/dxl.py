@@ -107,8 +107,8 @@ class Dxl:
         elif(dxl_error != 0):
             print(dynamixel.getRxPacketError(self.PROTOCOL_VERSION, dxl_error))
     def set_moving_speed(self, ids):
-        # for i,val in ids.iteritems():
-        #     self._set_moving_speed(i,val)
+        for i,val in ids.iteritems():
+            self._set_moving_speed(i,val)
 
     def _enable_torque(self, DXL_ID):
         dynamixel.write2ByteTxRx(self.portHandler, self.PROTOCOL_VERSION, DXL_ID, self.ADDR_MX_TORQUE_ENABLE, 1)
