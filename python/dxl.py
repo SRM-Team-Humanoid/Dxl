@@ -134,6 +134,8 @@ class Dxl:
     def disable_torque(self, ids):
         for i in ids:
             self._enable_torque(i)
+    def close():
+        self.portHandler.closePort()
 # ports = get_available_ports()
 
 # d = Dxl(ports[0])

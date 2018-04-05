@@ -173,3 +173,7 @@ std::map<int, int> Dxl::get_present_speed(int k){
   }
   return res;
 }
+
+void Dxl::close(){
+  portHandler->closePort();
+}

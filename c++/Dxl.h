@@ -25,6 +25,7 @@ class Dxl{
     std::map<int, int> get_present_speed(int);
     int _set_moving_speed(int, int);
     int set_moving_speed(std::map<int, int>);
+    void close();
 };
 
 
